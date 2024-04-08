@@ -1,25 +1,17 @@
-name: Commit Message Check
+name: Commit Message Check on PR
 
 on:
-  push:
-    paths:
-      - '**.git'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  commit-message-check:
+  check-commit-message:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # 获取所有提交记录以便检查提交信息
 
-    - name: Check commit message
-      run: |
-        COMMIT_MESSAGES=$(git log --format=%B -n 1)
-
-        if [[ ! "$COMMIT_MESSAGES" =~ ^([a-z0-9]+)(\([a-z0-9-]+)\)?:\s(.+)$ ]]; then
-          echo "Commit message is invalid"
-          exit 1
-        fi
-
-        echo "Commit message is valid"
+      - name: Check commit messages in PR
+        run: ./scripts/check_commit_msg.sh ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
