@@ -1,0 +1,6 @@
+[book]
+authors = ["KingYen."]
+language = "en"
+multilingual = false
+src = "src"
+title = "QIT Programming Studio ICPC Guild book"
